@@ -1,0 +1,246 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>sliderBlocks</title>
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<link href="css/block.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+
+<section class="Fool Fo1">
+    <div class="left">
+    	<div class="menu">
+        	<h4>FASHION</h4>
+            <p>時尚態度</p>
+        </div>
+        <div class="scrollBg"><div class="wrap"></div></div>
+    </div>
+    <div class="right">
+    	<div class="menu">
+			<h4>LIFESTYLE</h4>
+            <p>生活時尚</p>
+        </div>
+        <div class="scrollBg"><div class="wrap"></div></div>
+    </div>
+</section>
+<div id="mask"></div>
+<div class="left-draw">
+	<div class="close"></div>
+	<div class="menu">
+		<h4>FASHION</h4>
+		<p>時尚態度</p>
+	</div>
+    <div class="artist">artist01</div>
+    <div class="artist">artist02</div>
+    <div class="artist">artist03</div>
+    <div class="artist">artist04</div>
+    <div class="artist">artist05</div>
+    <div class="artist">artist06</div>
+</div>
+<div class="right-draw">
+	<div class="close"></div>
+    <div class="menu">
+		<h4>LIFESTYLE</h4>
+		<p>生活時尚</p>
+    </div>
+    <div class="artwork">artwork01</div>
+    <div class="artwork">artwork02</div>
+    <div class="artwork">artwork03</div>
+    <div class="artwork">artwork04</div>
+    <div class="artwork">artwork05</div>
+    <div class="artwork">artwork06</div>
+</div>
+
+<script type="text/javascript">
+$(function(){
+	//定每一層樓的高度
+	/*var winHeight = $(window).height();
+	$("section.Fool").height(winHeight);*/
+	
+	//產生圖片
+	var artistList = '',
+		artworkList = '',
+		artistBgList = '',
+		artworkBgList = '';
+	var artistBg = new Array (
+		"img/designerBig1.jpg",
+		"img/productBig1.jpg",
+		"img/designerBig1.jpg"
+	);
+	var artworkBg = new Array (
+		"img/productBig1.jpg",
+		"img/designerBig1.jpg",
+		"img/productBig1.jpg"	
+	);
+	var artist = new Array(
+		"img/pic1.jpg",
+		"img/pic2.jpg",
+		"img/pic3.jpg",
+		"img/pic3.jpg",
+		"img/pic2.jpg",
+		"img/pic1.jpg"
+	);
+	var artwork = new Array(
+		"img/pic3.jpg",
+		"img/pic2.jpg",
+		"img/pic1.jpg",
+		"img/pic1.jpg",
+		"img/pic2.jpg",
+		"img/pic3.jpg"
+	);	
+
+	for(var i=0; i < artist.length; i++){
+		artistList += "<span><img src='" + artist[i] + "'></span>";
+	};
+	for(var i=0; i < artwork.length; i++){
+		artworkList += "<span><img src='" + artwork[i] + "'></span>";
+	};
+	$(".left").find(".menu").append(artistList);
+	$(".left-draw").find(".menu").append(artistList);
+	$(".right").find(".menu").append(artworkList);
+	$(".right-draw").find(".menu").append(artworkList);
+	
+	for(var i=0;i<artistBg.length;i++){
+		artistBgList += "<div><img src='" + artistBg[i] + "'></div>"
+	};
+	for(var i=0;i<artworkBg.length;i++){
+		artworkBgList += "<div><img src='" + artworkBg[i] + "'></div>"
+	};
+	$(".left .scrollBg").find(".wrap").append(artistBgList);
+	$(".right .scrollBg").find(".wrap").append(artworkBgList);
+	
+	var index = '',
+		$setTime_1 = '',
+		$setTime_2 = '';
+		
+	setWidth();
+	$(window).resize(function(){
+		console.log("resize");
+		setWidth();
+		index = 0;
+	});
+	function setWidth(){
+		index = 0;
+		$("section.Fool").height($(window).height());
+		clearInterval($setTime_1);
+		clearInterval($setTime_2);
+		
+		$(".left .wrap").find("div").css("width",$(".left").width());
+		$(".left .wrap").css("width",$(".left .wrap").find("div").length*$(".left").width());
+		$(".right .wrap").find("div").css("width",$(".right").width());
+		$(".right .wrap").css("width",$(".right .wrap").find("div").length*$(".right").width());		
+		$(".left .wrap").animate({left:0},500);
+		$(".right .wrap").animate({left:0},500);
+		artistBgMove();
+		artworkBgMove();
+				
+	};
+	
+	$(".left,.right").hover(function(){
+		$(this).find(".menu").stop().fadeToggle();
+	});
+	
+	//藝術家頭像
+	$(".left span").click(function(){
+		clearInterval($setTime_1);
+		clearInterval($setTime_2);
+		$("body").css("overflow","hidden");
+		$("#mask,.left-draw .close").fadeIn();
+		$(".left-draw").css("width","50%");
+	});
+	//作品頭像
+	$(".right span").click(function(){
+		clearInterval($setTime_1);
+		clearInterval($setTime_2);
+		$("body").css("overflow","hidden");
+		$("#mask,.right-draw .close").fadeIn();
+		$(".right-draw").css("width","50%");
+	});
+	//關閉藝術家和作品詳細資料
+	$(".left-draw .close,.right-draw .close,#mask").on("click", function(){
+		artistBgMove();
+		artworkBgMove();
+		$(".right-draw,.left-draw").css("width","");
+		$("#mask,.left-draw .close,.right-draw .close").fadeOut(function(){
+            $("body").removeAttr("style");
+		});
+	});
+	//點選頭像展開相應的內容
+	$(".left .menu,.left-draw .menu").on("click","span",function(){
+		var spanIndex = $(this).index()-2;
+		//console.log(spanIndex);
+		$(".left-draw .artist").removeClass("selected");
+		$(".left-draw .artist").eq(spanIndex).addClass("selected");
+	});
+	//點選作品展開相應的內容
+	$(".right .menu,.right-draw .menu").on("click","span",function(){
+		var spanIndex = $(this).index()-2;
+		//console.log(spanIndex);
+		$(".right-draw .artwork").removeClass("selected");
+		$(".right-draw .artwork").eq(spanIndex).addClass("selected");
+	});
+	
+	//背景圖輪播
+	function artistBgMove(){
+		wrap1 = $('.left .wrap');
+		length1 = $('.left .wrap').find("div").length;
+		block1 = $('.left').width();
+		$setTime_1 =setInterval(function(){
+			BgScroll(wrap1,length1,block1);
+		},2000);
+	};
+	function artworkBgMove(){
+		wrap2 = $('.right .wrap');
+		length2 = $('.right .wrap').find("div").length;
+		block2 = $('.right').width();
+		$setTime_2 =setInterval(function(){
+			BgScroll(wrap2,length2,block2);
+		},2000);
+	};		
+	function BgScroll(wrap,length,block){
+		if(index<length-1){
+			index++;		
+		}else{
+			index = 0;	
+		}
+		var _width = -(index*block);
+		wrap.animate({left:_width},500);
+	};
+/*	//背景圖輪播
+	var index=0;
+	function BgScroll(wrap,length,block){
+		//console.log(index);
+		if(index<length-1){
+			index++;		
+		}else{
+			index = 0;	
+		}
+		var _width = -(index*block);
+		wrap.animate({left:_width},500);
+	};
+	function artistBgMove(){
+			wrap1 = $('.left .wrap');
+			length1 = $('.left .wrap').find("div").length;
+			block1 = $('.left').width();
+		setInterval(function(){
+			BgScroll(wrap1,length1,block1);
+		},5000);
+	};
+	function artworkBgMove(){
+		wrap2 = $('.right .wrap');
+		length2 = $('.right .wrap').find("div").length;
+		block2 = $('.right').width();
+		setInterval(function(){
+			BgScroll(wrap2,length2,block2);
+		},5000);
+	};
+	artistBgMove();
+	artworkBgMove();*/
+});
+
+</script>
+
+</body>
+</html>
